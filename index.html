@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="ToDo">
+
+<head>
+    <title>To-do Application</title>
+
+    <script src="js/angular.min.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.2.1/firebase.js"></script>
+    <script src="https://cdn.firebase.com/libs/angularfire/1.0.0/angularfire.min.js"></script>
+    <style>
+        .done {
+            text-decoration: line-through;
+            color: #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <div ng-controller="todoController">
+        <form name="frm" ng-submit="addTodo()">
+
+            <input type="text" name="newTodo" ng-model="newTodo" required>
+            <button ng-disabled="frm.$invalid">Add</button>
+        </form>
+
+        <button ng-click="clearCompleted()">Clear Completed</button>
+
+        <ul>
+            <li ng-repeat="todo in todos">
+                <button ng-click="removeTodo(todo)">Delete</button>
+                <span ng-class="{'done':todo.done}">{{todo.title}}</span>
+            </li>
+
+        </ul>
+    </div>
+    <script>
+        var toDoApp = angular.module("ToDo", ["firebase"]);
+
+        toDoApp.controller("todoController", ["$scope", "$firebaseArray", function ($scope, $firebaseArray) {
+            var ref = new Firebase("#");
+            $scope.todos = $firebaseArray(ref);
+
+            $scope.addTodo = function () {
+                $scope.todos.$add({
+                    'title': $scope.newTodo,
+                    'done': false
+                })
+                $scope.newTodo = "";
+            }
+            $scope.removeTodo = function (key) {
+
+                $scope.todos.$remove(key);
+
+
+            };
+    }]);
+    </script>
+</body>
+
+</html>
